@@ -36,12 +36,14 @@ def _setup_driver():
         # Solo para entorno AWS
         if os.path.exists('/usr/bin/chromium-browser'):
             options.binary_location = '/usr/bin/chromium-browser'
+            logger.info("Usando chromium-browser")
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
         
-        driver.set_page_load_timeout(30)
-        driver.implicitly_wait(10)
+        # Aumentar timeouts
+        driver.set_page_load_timeout(90)
+        driver.implicitly_wait(45)      
         
         logger.info("Driver iniciado exitosamente")
         return driver
