@@ -11,6 +11,7 @@ import hashlib
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from webdriver_manager.chrome import ChromeDriverManager
+import os
 
 app = Flask(__name__)
 
@@ -31,6 +32,10 @@ def _setup_driver():
         options.add_argument('--ignore-certificate-errors')       
         options.add_argument('--allow-insecure-localhost')       
         options.add_argument('--allow-running-insecure-content')
+        
+        # Solo para entorno AWS
+        if os.path.exists('/usr/bin/chromium-browser'):
+            options.binary_location = '/usr/bin/chromium-browser'
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
