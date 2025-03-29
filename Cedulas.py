@@ -32,8 +32,13 @@ def _setup_driver():
         options.add_argument('--ignore-certificate-errors')       
         options.add_argument('--allow-insecure-localhost')       
         options.add_argument('--allow-running-insecure-content')
+     
+        options.add_argument('--disable-extensions')
+        options.add_argument('--disable-dev-tools')
+        options.add_argument('--remote-debugging-port=9222')
+        options.add_argument('--test-type')
         
-        # Solo para entorno AWS
+        # Usar chromium-browser en AWS
         if os.path.exists('/usr/bin/chromium-browser'):
             options.binary_location = '/usr/bin/chromium-browser'
             logger.info("Usando chromium-browser")
