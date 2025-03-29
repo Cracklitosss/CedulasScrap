@@ -32,7 +32,6 @@ def _setup_driver():
         options.add_argument('--ignore-certificate-errors')       
         options.add_argument('--allow-insecure-localhost')       
         options.add_argument('--allow-running-insecure-content')
-     
         options.add_argument('--disable-extensions')
         options.add_argument('--disable-dev-tools')
         options.add_argument('--remote-debugging-port=9222')
@@ -43,10 +42,10 @@ def _setup_driver():
             options.binary_location = '/usr/bin/chromium-browser'
             logger.info("Usando chromium-browser")
         
-        service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=options)
+        service = Service(ChromeDriverManager(version="latest").install())
         
-        # Aumentar timeouts
+        driver = webdriver.Chrome(service=service, options=options)
+
         driver.set_page_load_timeout(90)
         driver.implicitly_wait(45)      
         
