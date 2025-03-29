@@ -15,7 +15,6 @@ import os
 
 app = Flask(__name__)
 
-# Configuración de logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -28,26 +27,34 @@ def _setup_driver():
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--ignore-ssl-errors=yes')         
-        options.add_argument('--ignore-certificate-errors')       
-        options.add_argument('--allow-insecure-localhost')       
-        options.add_argument('--allow-running-insecure-content')
-        options.add_argument('--disable-extensions')
-        options.add_argument('--disable-dev-tools')
-        options.add_argument('--remote-debugging-port=9222')
-        options.add_argument('--test-type')
         
-        # Usar chromium-browser en AWS
+        service = Service(ChromeDriverManager().install())
+        
+        # Configuración específica para AWS
         if os.path.exists('/usr/bin/chromium-browser'):
+            logger.info("Usando configuración para AWS...")
             options.binary_location = '/usr/bin/chromium-browser'
+            options.add_argument('--ignore-ssl-errors=yes')         
+            options.add_argument('--ignore-certificate-errors')       
+            options.add_argument('--allow-insecure-localhost')       
+            options.add_argument('--allow-running-insecure-content')
+            options.add_argument('--disable-extensions')
+            options.add_argument('--disable-dev-tools')
+            options.add_argument('--remote-debugging-port=9222')
+            options.add_argument('--test-type')
             logger.info("Usando chromium-browser")
-        
-        service = Service(ChromeDriverManager(version="latest").install())
+
+            from selenium.webdriver.chrome.service import Service as ChromeService
+            service = ChromeService('/usr/bin/chromedriver')
         
         driver = webdriver.Chrome(service=service, options=options)
-
-        driver.set_page_load_timeout(90)
-        driver.implicitly_wait(45)      
+  
+        if os.path.exists('/usr/bin/chromium-browser'):
+            driver.set_page_load_timeout(90)
+            driver.implicitly_wait(45)
+        else:
+            driver.set_page_load_timeout(30)
+            driver.implicitly_wait(15)
         
         logger.info("Driver iniciado exitosamente")
         return driver
