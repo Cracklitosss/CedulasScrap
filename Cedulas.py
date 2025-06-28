@@ -28,9 +28,7 @@ def _setup_driver():
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         
-        service = Service(ChromeDriverManager().install())
-        
-        # Configuración específica para AWS
+        # Configuración específica para AWS - PRIMERO
         if os.path.exists('/usr/bin/chromium-browser'):
             logger.info("Usando configuración para AWS...")
             options.binary_location = '/usr/bin/chromium-browser'
@@ -46,6 +44,9 @@ def _setup_driver():
 
             from selenium.webdriver.chrome.service import Service as ChromeService
             service = ChromeService('/usr/bin/chromedriver')
+        else:
+            # Solo usar WebDriver Manager si NO estamos en AWS
+            service = Service(ChromeDriverManager().install())
         
         driver = webdriver.Chrome(service=service, options=options)
   
